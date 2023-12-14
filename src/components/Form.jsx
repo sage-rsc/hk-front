@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import SelectSector from './SelectSector';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Form = () => {
@@ -8,6 +8,7 @@ const Form = () => {
     const [agreeToTerms, setAgreeToTerms] = useState(false);
     const [sectors, setSectors] = useState([]);
     const [selectedSectors, setSelectedSectors] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const getSectors = async () => {
         try {
@@ -21,14 +22,17 @@ const Form = () => {
             console.error('Error fetching sectors:', error.message);
         }
     };
+
     useEffect(() => {
         getSectors();
     }, []);
 
     const handleSave = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
+        setLoading(true);
+
         try {
-            const selectedSids = selectedSectors.map(sector => sector.sid);
+            const selectedSids = selectedSectors.map((sector) => sector.sid);
 
             const formData = {
                 name,
@@ -43,7 +47,7 @@ const Form = () => {
                 },
                 body: JSON.stringify(formData),
             });
-            const msg = await (await response.json())?.message
+            const msg = await (await response.json())?.message;
             if (!response.ok) {
                 throw new Error(msg);
             }
@@ -58,6 +62,8 @@ const Form = () => {
                 position: 'top-right',
                 autoClose: 3000,
             });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -67,28 +73,37 @@ const Form = () => {
             <div className="input-group">
                 <label className="label">
                     Name:
-                    <input type="text" required={true} value={name} className="input"
-                           onChange={(e) => setName(e.target.value)}/>
+                    <input
+                        type="text"
+                        required={true}
+                        value={name}
+                        className="input"
+                        onChange={(e) => setName(e.target.value)}
+                    />
                 </label>
             </div>
             <div className="input-group">
                 <label className="label">
                     Sectors:
-                    <SelectSector className="input" sectors={sectors}
-                                  onChange={setSelectedSectors}/>
+                    <SelectSector className="input" sectors={sectors} onChange={setSelectedSectors} />
                 </label>
             </div>
             <div className="input-group">
                 <label className="label">
-                    <input type="checkbox" required={true} checked={agreeToTerms}
-                           onChange={() => setAgreeToTerms(!agreeToTerms)}/> Agree to
-                    terms
+                    <input
+                        type="checkbox"
+                        required={true}
+                        checked={agreeToTerms}
+                        onChange={() => setAgreeToTerms(!agreeToTerms)}
+                    />{' '}
+                    Agree to terms
                 </label>
             </div>
-
-            <br/>
-            <br/>
-            <input type="submit" value="Save" className="button"/>
+            <br />
+            <br />
+            <button type="submit" className="button" disabled={loading}>
+                {loading ? 'Saving...' : 'Save'}
+            </button>
         </form>
     );
 };
