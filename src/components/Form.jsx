@@ -11,7 +11,7 @@ const Form = () => {
 
     const getSectors = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/v1/sector');
+            const response = await fetch('https://hk-back.onrender.com/api/v1/sector');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -22,7 +22,6 @@ const Form = () => {
         }
     };
     useEffect(() => {
-        // Call the function when the component mounts
         getSectors();
     }, []);
 
@@ -37,7 +36,7 @@ const Form = () => {
                 agreeToTerms,
             };
 
-            const response = await fetch('http://localhost:3000/api/v1/user/add', {
+            const response = await fetch('https://hk-back.onrender.com/api/v1/user/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
