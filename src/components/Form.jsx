@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import SelectSector from './SelectSector';
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Form = () => {
@@ -9,6 +9,7 @@ const Form = () => {
     const [sectors, setSectors] = useState([]);
     const [selectedSectors, setSelectedSectors] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loadingSectors, setLoadingSectors] = useState(true);
 
     const getSectors = async () => {
         try {
@@ -20,6 +21,8 @@ const Form = () => {
             setSectors(sectors);
         } catch (error) {
             console.error('Error fetching sectors:', error.message);
+        } finally {
+            setLoadingSectors(false);
         }
     };
 
@@ -85,7 +88,11 @@ const Form = () => {
             <div className="input-group">
                 <label className="label">
                     Sectors:
-                    <SelectSector className="input" sectors={sectors} onChange={setSelectedSectors} />
+                    {loadingSectors ? (
+                        <p>Loading sectors...</p>
+                    ) : (
+                        <SelectSector className="input" sectors={sectors} onChange={setSelectedSectors}/>
+                    )}
                 </label>
             </div>
             <div className="input-group">
@@ -99,8 +106,8 @@ const Form = () => {
                     Agree to terms
                 </label>
             </div>
-            <br />
-            <br />
+            <br/>
+            <br/>
             <button type="submit" className="button" disabled={loading}>
                 {loading ? 'Saving...' : 'Save'}
             </button>
